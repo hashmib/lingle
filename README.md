@@ -1,0 +1,2 @@
+# lingle
+Wordle for lingo 
