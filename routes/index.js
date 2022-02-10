@@ -1,9 +1,14 @@
 // Initialization
-const express = require('express');
-const router = require('router');
+var express = require('express');
+var router = express.Router()
 
-// Controllers
+// Import controllers
+var controller = require('../controllers');
 
+
+
+
+router.post('/room', controller.createRoom);
 
 module.exports = {
     router

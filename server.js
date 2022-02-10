@@ -1,5 +1,5 @@
 const elastic = require('./config/elasticsearch');
-const server_util = require('./utils/server_initializer');
+const server_util = require('./utils/webserverinit');
 
 (async function main() {
 

@@ -1,8 +1,6 @@
 const { Client } = require('@elastic/elasticsearch');
 const esUrl = process.env.ELASTIC_URL || 'http://elasticsearch:9200';
 const client = new Client({ node: esUrl });
-const schema = require('../models');
-
 
 const ROOMS_INDEX = 'rooms';
 const DOCS_INDEX = 'docs';
