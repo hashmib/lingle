@@ -1,0 +1,28 @@
+{
+  "name": "lingleserver",
+  "version": "1.0.0",
+  "description": "Wordle for lingo - Server",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hashmib/lingle.git"
+  },
+  "author": "Bilal Hashmi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hashmib/lingle/issues"
+  },
+  "homepage": "https://github.com/hashmib/lingle#readme",
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.17.0",
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0",
+    "router": "^1.3.6"
+  }
+}

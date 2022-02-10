@@ -1,0 +1,26 @@
+version: '3'
+services:
+  server:
+    container_name: lingle_server
+    build: .
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8080:9999"
+    command: npm run start
+    networks: 
+      - linglenet
+
+  
+  elasticsearch:
+    container_name: es_db
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    networks:
+      - linglenet
+networks:
+  linglenet:
