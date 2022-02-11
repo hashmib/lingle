@@ -24,6 +24,9 @@ async function createRoomIndex() {
                         },
                         "createdAt": {
                             "type": "date",
+                        },
+                        "password": {
+                            "type": "text",
                         }
                       }
                     }

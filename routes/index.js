@@ -6,9 +6,10 @@ var router = express.Router()
 var controller = require('../controllers');
 
 
-
-
-router.post('/room', controller.createRoom);
+// Room APIs
+router.get('/room', controller.searchRoomController);
+router.post('/room', controller.createRoomController);
+router.post('/room/populatewords', controller.populateWordsController);
 
 module.exports = {
     router

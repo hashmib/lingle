@@ -2,6 +2,8 @@ const app = require('express')();
 const cors = require('cors');
 const bodyParser = require('body-parser')
 const morgan = require('morgan');
+const fileUpload = require('express-fileupload');
+
 
 // Module imports
 const config = require('../config');
@@ -12,6 +14,11 @@ function initServer() {
     // Parsing middleware to format in JSON
     app.use(bodyParser.json({limit: '25mb'}));
     app.use(bodyParser.urlencoded({ extended: true, limit: '25mb' }));
+
+    // enable files upload
+    app.use(fileUpload({
+        createParentPath: true,
+    }));
 
     // Set up logging
     app.use(morgan('tiny'));
