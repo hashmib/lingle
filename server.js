@@ -11,7 +11,7 @@ const server_util = require('./utils/webserverinit');
 
         // If index does not exist, create it
         if (!roomIndexExists.body) {
-            await elastic.createRoomIndex();
+            await elastic.createIndices();
         }
 
         server_util.initServer();

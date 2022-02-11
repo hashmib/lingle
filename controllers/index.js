@@ -50,10 +50,14 @@ async function populateWordsController(req, res) {
     } 
     else {
       let uploadedChat = req.files.file;
+
+      // Convert data stream buffer to string
       let parsedChat = parser.parseChat(uploadedChat.data.toString('utf8'));
-      //send response
+
+      let result = await model.populateWordsForRoom(parsedChat);
+
       res.send({
-          status: true,
+          success: true,
           message: 'File is uploaded',
           data: {
               name: uploadedChat.name,

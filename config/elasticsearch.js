@@ -9,7 +9,7 @@ const DOCS_INDEX = 'docs';
 /** Creates new index
  * @description Creates new index in Elasticsearch
  */
-async function createRoomIndex() {
+async function createIndices() {
     try {
         await client.indices.create({
             index: ROOMS_INDEX,
@@ -17,10 +17,10 @@ async function createRoomIndex() {
                 "mappings": {
                     "properties": {
                         "owner": {
-                          "type": "text",
+                          "type": "keyword",
                         },
                         "name": {
-                          "type": "text",
+                          "type": "keyword",
                         },
                         "createdAt": {
                             "type": "date",
@@ -37,6 +37,30 @@ async function createRoomIndex() {
         console.error(`An error occurred while creating the index ${ROOMS_INDEX}:`);
         console.log(err);
     }
+    try {
+      await client.indices.create({
+          index: DOCS_INDEX,
+          body: {
+              "mappings": {
+                  "properties": {
+                      "timestamp": {
+                        "type": "text",
+                      },
+                      "sender": {
+                        "type": "keyword",
+                      },
+                      "message": {
+                          "type": "text",
+                      }
+                    }
+                  }
+              }
+      });
+      console.log(`Created index ${DOCS_INDEX}`);
+  } catch (err) {
+      console.error(`An error occurred while creating the index ${DOCS_INDEX}:`);
+      console.log(err);
+  }
 }
 
 
@@ -65,7 +89,8 @@ async function checkConnection() {
 module.exports = {
     client,
     ROOMS_INDEX,
-    createRoomIndex,
+    DOCS_INDEX,
+    createIndices,
     checkConnection
 }
 

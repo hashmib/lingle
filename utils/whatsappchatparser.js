@@ -7,22 +7,25 @@ function parseChat(_chat) {
     parsedMessages = [];
 
     for (let i in messageList) {
-        messageObject = [];
+        messageObject = {};
         
         // First space delimits timestamp
         let splitList = messageList[i].split('] ');
-        messageObject.push(splitList[0]);
+
+        // Remove [ character
+        let timestamp = splitList[0].replace('[', '');
+        messageObject["timestamp"] = timestamp;
 
         let remainder = splitList[1];
 
         // First few messages in a chat file never have a semicolon, so no sender
         if (remainder.includes(':')) {
             let msg = remainder.split(': ');
-            messageObject.push(msg[0]);
-            messageObject.push(msg[1]);
+            messageObject["sender"] = msg[0];
+            messageObject["message"] = msg[1];
         }
         else {
-            messageObject.push(remainder);
+            messageObject["message"] = remainder;
         }
 
         parsedMessages.push(messageObject);
