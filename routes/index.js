@@ -7,9 +7,9 @@ var controller = require('../controllers');
 
 
 // Room APIs
-router.get('/room', controller.searchRoomController);
-router.post('/room', controller.createRoomController);
-router.post('/room/populatewords', controller.populateWordsController);
+//router.get('/room', controller.searchRoomController);
+router.post('/createlingleroom', controller.createRoomController);
+router.get('/wordoftheday', controller.wordOfTheDayController);
 
 module.exports = {
     router

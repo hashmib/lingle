@@ -1,71 +1,53 @@
 const esClient = require('../config/elasticsearch');
 
-async function createRoom(owner, name, password) {
-  try {
-    await esClient.client.index({
-      index: esClient.ROOMS_INDEX,
-      body: {
-        owner,
-        name,
-        createdAt: new Date().toISOString(),
-        password,
-      }
-    })
-    console.log(`Created room ${name} owned by ${owner}`);
-  } catch (err) {
-      console.error(`An error occurred while creating the room ${name}:`);
-      console.log(err);
-  }
-}
-
-async function searchForRoom(roomName) {
+async function getWordOfTheDay(_roomUuid) {
   // Room name must match, & password must be correct
   try {
+    console.log(_roomUuid);
     const result = await esClient.client.search({
-      index: esClient.ROOMS_INDEX,
+      index: esClient.WORDS_INDEX,
       body: {
-        query: {
-          match: {
-            name: roomName
+        "query": {
+          "match": {
+            "room_uuid": _roomUuid
           }
         }
       }
     });
-    let searchResults = result.body.hits.hits;
-    return searchResults;
+
+    // The index is already sorted by most frequent words for each room
+    let topHit = result.body.hits.hits[0];
+
+    // We now have our top hit, we will return to the client, and remove it from the index
+    let clearIndex = await esClient.client.delete({
+      index: esClient.WORDS_INDEX,
+      id: topHit._id
+    });
+
+    // Return the object, which includes the word and frequency
+    return topHit._source;
+
   } catch (err) {
-      console.error(`An error occurred while connecting and searching Elasticsearch for room ${roomName}:`);
+      console.error(`An error occurred while connecting and searching Elasticsearch for word with room uuid ${_roomUuid}:`);
       console.log(err);
     }
 }
 
-async function populateWordsForRoom(_chat) {
+async function populateWordsForRoom(_chat, _words) {
   try {
-    const body = _chat.flatMap(doc => [{ index: { _index: esClient.DOCS_INDEX } }, doc])
+    // Uses Elastic's bulk index to index all the messages in the chat
+    const body = _chat.flatMap(doc => [{ index: { _index: esClient.MESSAGES_INDEX } }, doc])
     const { body: bulkResponse } = await esClient.client.bulk({ refresh: true, body })
-
-    if (bulkResponse.errors) {
-      const erroredDocuments = []
-      // The items array has the same order of the dataset we just indexed.
-      // The presence of the `error` key indicates that the operation
-      // that we did for the document has failed.
-      bulkResponse.items.forEach((action, i) => {
-        const operation = Object.keys(action)[0]
-        if (action[operation].error) {
-          erroredDocuments.push({
-            // If the status is 429 it means that you can retry the document,
-            // otherwise it's very likely a mapping error, and you should
-            // fix the document before to try it again.
-            status: action[operation].status,
-            error: action[operation].error,
-            operation: body[i * 2],
-            document: body[i * 2 + 1]
-          })
-        }
-      })
-      console.log(erroredDocuments)
-    }
-    console.log(`Populated es with chat`);
+    console.log(`Bulk populated elasticsearch with chat`);
+  } catch (err) {
+      console.error(`An error occurred while populating Elasticsearch with chat:`);
+      console.log(err);
+  }
+  try {
+    // Uses Elastic's bulk index to index all the lingo words from the chat
+    const body = _words.flatMap(doc => [{ index: { _index: esClient.WORDS_INDEX } }, doc])
+    const { body: bulkResponse } = await esClient.client.bulk({ refresh: true, body })
+    console.log(`Bulk populated elasticsearch with words`);
   } catch (err) {
       console.error(`An error occurred while populating Elasticsearch with chat:`);
       console.log(err);
@@ -73,24 +55,6 @@ async function populateWordsForRoom(_chat) {
 }
 
 module.exports = {
-  createRoom,
-  searchForRoom,
-  populateWordsForRoom
+  populateWordsForRoom,
+  getWordOfTheDay
 }
-
-/*
-
-may not need this.
-weird bug, didn't work if you pulled schema in from here
-const RoomSchema = {
-    "owner": {
-        "type": "text",
-      },
-      "name": {
-        "type": "text",
-      }
-}
-
-module.exports = {
-    RoomSchema
-}*/

@@ -7,7 +7,7 @@ const server_util = require('./utils/webserverinit');
 
     // If we are connected to the es cluster, check if index exists
     if (elasticReady) {
-        const roomIndexExists = await elastic.client.indices.exists({index: elastic.ROOMS_INDEX});
+        const roomIndexExists = await elastic.client.indices.exists({index: elastic.MESSAGES_INDEX});
 
         // If index does not exist, create it
         if (!roomIndexExists.body) {

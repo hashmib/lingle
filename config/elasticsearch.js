@@ -2,8 +2,9 @@ const { Client } = require('@elastic/elasticsearch');
 const esUrl = process.env.ELASTIC_URL || 'http://elasticsearch:9200';
 const client = new Client({ node: esUrl });
 
-const ROOMS_INDEX = 'rooms';
-const DOCS_INDEX = 'docs';
+
+const MESSAGES_INDEX = 'messages';
+const WORDS_INDEX = 'words';
 
 
 /** Creates new index
@@ -12,53 +13,59 @@ const DOCS_INDEX = 'docs';
 async function createIndices() {
     try {
         await client.indices.create({
-            index: ROOMS_INDEX,
+            index: MESSAGES_INDEX,
             body: {
                 "mappings": {
-                    "properties": {
-                        "owner": {
-                          "type": "keyword",
-                        },
-                        "name": {
-                          "type": "keyword",
-                        },
-                        "createdAt": {
-                            "type": "date",
-                        },
-                        "password": {
-                            "type": "text",
-                        }
-                      }
+                  "properties": {
+                    "timestamp": {
+                      "type": "text",
+                    },
+                    "sender": {
+                      "type": "text",
+                    },
+                    "message": {
+                        "type": "text",
+                    },
+                    "room_uuid" : {
+                      "type": "keyword",
+                    }
+                  }
                     }
                 }
         });
-        console.log(`Created index ${ROOMS_INDEX}`);
+        console.log(`Created index ${MESSAGES_INDEX}`);
     } catch (err) {
-        console.error(`An error occurred while creating the index ${ROOMS_INDEX}:`);
+        console.error(`An error occurred while creating the index ${MESSAGES_INDEX}:`);
         console.log(err);
     }
     try {
       await client.indices.create({
-          index: DOCS_INDEX,
+          index: WORDS_INDEX,
           body: {
+              "settings": {
+                "index": {
+                  "sort.field": "frequency", 
+                  "sort.order": "desc"  
+                }
+              },
               "mappings": {
                   "properties": {
-                      "timestamp": {
+                      "word": {
                         "type": "text",
                       },
-                      "sender": {
-                        "type": "keyword",
+                      "frequency": {
+                        "type": "integer",
                       },
-                      "message": {
-                          "type": "text",
+                      "room_uuid" : {
+                        "type": "keyword",
                       }
                     }
                   }
               }
       });
-      console.log(`Created index ${DOCS_INDEX}`);
+      console.log(`Created index ${WORDS_INDEX}`);
   } catch (err) {
-      console.error(`An error occurred while creating the index ${DOCS_INDEX}:`);
+      console.error(`An error occurred while creating the index ${WORDS_INDEX}:`);
       console.log(err);
   }
 }
@@ -88,8 +95,8 @@ async function checkConnection() {
 
 module.exports = {
     client,
-    ROOMS_INDEX,
-    DOCS_INDEX,
+    MESSAGES_INDEX,
+    WORDS_INDEX,
     createIndices,
     checkConnection
 }
