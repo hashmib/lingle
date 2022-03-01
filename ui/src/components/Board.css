@@ -1,4 +1,4 @@
-.App {
+.lingleboard {
   text-align: center;
 
   display: grid;
@@ -118,15 +118,15 @@
 }
 
 .key.not-in-word {
-  background-color: rgb(133, 133, 133);
+  background-color: rgb(161, 151, 151);
 }
 
 .key.in-word {
-  background-color: rgb(188, 188, 65);
+  background-color: rgb(201, 171, 37);
 }
 
 .key.at-location {
-  background-color: rgb(61, 152, 90);
+  background-color: rgb(41, 172, 83);
 }
 
 .key:hover {
