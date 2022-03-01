@@ -1,12 +1,28 @@
 version: '3'
 services:
+  game:
+    container_name: lingleGame
+    build: 
+      context: ./ui
+      dockerfile: ./Dockerfile
+    ports:
+      - "3000:3000"
+    links:
+      - "server"
+    networks: 
+      - linglenet
+    command: npm run dev
+    
+
   server:
-    container_name: lingle_server
-    build: .
+    container_name: lingleAPI
+    build: 
+      context: ./api
+      dockerfile: ./Dockerfile
     depends_on:
       - elasticsearch
     ports:
-      - "8080:9999"
+      - "8080:8080"
     command: npm run start
     networks: 
       - linglenet
