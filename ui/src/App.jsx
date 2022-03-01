@@ -43,10 +43,15 @@ const useStyles = makeStyles(theme => ({
 function App() {
   const classes = useStyles();
   const [roomName, setRoomName] = useState('');
+  const [newRoomName, setNewRoomName] = useState('');
   const [isPlaying, setisPlaying] = useState(false);
 
   const handleRoomNameChange = (event) => {
     setRoomName(event.target.value);
+  };
+
+  const handleNewRoomNameChange = (event) => {
+    setNewRoomName(event.target.value);
   };
 
   const handleRoomNameSubmit = (event) => {
@@ -99,8 +104,8 @@ function App() {
                       className: classes.text
                     }}
                     className={classes.textField}
-                    value={roomName}
-                    onChange={handleRoomNameChange}
+                    value={newRoomName}
+                    onChange={handleNewRoomNameChange}
                   />
                   <Button variant="outlined" color="secondary" component="label">
                     Choose Whatsapp File
