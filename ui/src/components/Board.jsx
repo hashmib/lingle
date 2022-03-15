@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Button } from "@material-ui/core";
 import './Board.css'
 
 function keyIsInvalid (key) {
@@ -20,6 +21,17 @@ function noMoreToAdd ({ attempts, position }) {
 function wordIsNotComplete ({ attempts, position }) {
   return attempts[position.attempt].some(char => char.value === '')
 }
+
+function wordIsComplete(currentAttempt) {
+  console.log(currentAttempt)
+  for (let letterIndex in currentAttempt) {
+    if (currentAttempt[letterIndex].status !== 'at-location') {
+      return false
+    }
+  }
+  return true
+}
+
 
 const initialGameState = {
   word: '',
@@ -75,22 +87,37 @@ const initialGameState = {
   error: ''
 }
 
+// Calls our API to fetch the word to be guessed
+async function fetchWordOfTheDay(room_name) {
+  let queryBuilder = "/api/wordoftheday?name=" + room_name;
+  const data = await fetch(queryBuilder)
+    .then(response => response.json())
+    .catch(error => {
+      console.log(error);
+    });
+  
+  return data;
+}
+
+
 function Board (props) {
   const [{ word, attempts, position, error }, setGameState] = useState(
     initialGameState
   )
-  // Call our API to fetch WOTD
-  useEffect(() => {
-    let queryBuilder = "/api/wordoftheday?name=" + props.room;
-    console.log(queryBuilder);
-    fetch(queryBuilder)
-    .then(response => response.json())
-    .then(data => setGameState(gameState => {
-      const newGameState = JSON.parse(JSON.stringify(gameState))
-      newGameState.word = data.word.word.toUpperCase();
 
-      return newGameState
-    }))
+  const [isWon, setIsWon] = useState(false)
+
+  // useEffect requires async within an async... weird
+  useEffect(() => {
+    (async () => {
+      const data = await fetchWordOfTheDay(props.room)
+      setGameState(gameState => {
+        const newGameState = JSON.parse(JSON.stringify(gameState))
+        newGameState.word = data.word.word.toUpperCase();
+  
+        return newGameState
+      });
+    })();
   },[])
 
   function enterCharacter (char) {
@@ -109,6 +136,22 @@ function Board (props) {
 
       return newGameState
     })
+  };
+
+
+  async function handlePlayAgain(event) {
+    event.preventDefault();
+
+    const data = await fetchWordOfTheDay(props.room)
+    setGameState(gameState => {
+      gameState = JSON.parse(JSON.stringify(initialGameState))
+      const newGameState = JSON.parse(JSON.stringify(gameState));
+      newGameState.word = data.word.word.toUpperCase();
+      console.log(newGameState)
+
+      return newGameState;
+    });
+    setIsWon(false);
   }
 
   function eraseCharacter () {
@@ -171,6 +214,10 @@ function Board (props) {
       position.char = 0
 
       newGameState.error = ''
+
+      if (wordIsComplete(currentAttempt)) {
+        setIsWon(true)
+      }
 
       return newGameState
     })
@@ -239,71 +286,73 @@ function Board (props) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [position.attempt])
 
+
   return (
     <div className='lingleboard'>
-      <div className='board'>
-        {attempts.map((attempt, attemptIndex) => (
-          <div
-            key={attemptIndex}
-            className={`attempt ${
-              attemptIndex === position.attempt ? 'current' : ''
-            }`}
-          >
-            {attempt.map((char, charIndex) => (
-              <span
-                key={`${attemptIndex}-${charIndex}`}
-                id={`char-${attemptIndex}-${charIndex}`}
-                className={`char ${char.status} ${
-                  position.attempt === attemptIndex &&
-                  position.char === charIndex
-                    ? 'current'
-                    : ''
-                }`}
-                style={{
-                  transition: `background-color 0s ${charIndex * 400 +
-                    200}ms ease`,
-                  animationDelay: charIndex * 400 + 'ms'
-                }}
-                onClick={() => {
-                  updatePosition({ attempt: attemptIndex, char: charIndex })
-                }}
-              >
-                {char.value}
-              </span>
-            ))}
-          </div>
-        ))}
-      </div>
-      <div className='error'>{error}</div>
-      <div className='keyboard'>
-        {['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, rowIndex) => (
-          <div key={rowIndex} className={`row row-${rowIndex}`}>
-            {row.split('').map(letter => (
-              <button
-                key={letter}
-                className={`key ${checkKey(letter)}`}
-                onClick={() => enterCharacter(letter)}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
-        ))}
-        <div className='row'>
-          <button className='key delete' onClick={eraseCharacter}>
-            <img
-              src='https://www.svgrepo.com/show/48292/delete.svg'
-              alt='delete'
-            />
-          </button>
-          <button className='key enter' onClick={guessWord}>
-            <img
-              src='https://www.svgrepo.com/show/258678/send.svg'
-              alt='send'
-            />
-          </button>
-        </div>
-      </div>
+            <div className='board'>
+              {attempts.map((attempt, attemptIndex) => (
+                <div
+                  key={attemptIndex}
+                  className={`attempt ${
+                    attemptIndex === position.attempt ? 'current' : ''
+                  }`}
+                >
+                  {attempt.map((char, charIndex) => (
+                    <span
+                      key={`${attemptIndex}-${charIndex}`}
+                      id={`char-${attemptIndex}-${charIndex}`}
+                      className={`char ${char.status} ${
+                        position.attempt === attemptIndex &&
+                        position.char === charIndex
+                          ? 'current'
+                          : ''
+                      }`}
+                      style={{
+                        transition: `background-color 0s ${charIndex * 400 +
+                          200}ms ease`,
+                        animationDelay: charIndex * 400 + 'ms'
+                      }}
+                      onClick={() => {
+                        updatePosition({ attempt: attemptIndex, char: charIndex })
+                      }}
+                    >
+                      {char.value}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+            {isWon ? <Button variant="contained" color="secondary" onClick={handlePlayAgain}> Congrats! Play the next word!</Button> : null}
+            <div className='error'>{error}</div>
+            <div className='keyboard'>
+              {['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, rowIndex) => (
+                <div key={rowIndex} className={`row row-${rowIndex}`}>
+                  {row.split('').map(letter => (
+                    <button
+                      key={letter}
+                      className={`key ${checkKey(letter)}`}
+                      onClick={() => enterCharacter(letter)}
+                    >
+                      {letter}
+                    </button>
+                  ))}
+                </div>
+              ))}
+              <div className='row'>
+                <button className='key delete' onClick={eraseCharacter}>
+                  <img
+                    src='https://www.svgrepo.com/show/48292/delete.svg'
+                    alt='delete'
+                  />
+                </button>
+                <button className='key enter' onClick={guessWord}>
+                  <img
+                    src='https://www.svgrepo.com/show/258678/send.svg'
+                    alt='send'
+                  />
+                </button>
+              </div>
+            </div>
     </div>
   )
 }

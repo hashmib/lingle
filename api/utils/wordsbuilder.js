@@ -1,5 +1,7 @@
 var fs = require('fs');
 
+const annoyingStopWords = [`https`, `youtu`, `gonna`, `wanna`, `kinda`, `hahah`, `loool`];
+
 async function buildLingleWords(_fiveletterwords, _roomUuid) {
     let filteredWords = []
     let wordsObjects  = []
@@ -11,13 +13,12 @@ async function buildLingleWords(_fiveletterwords, _roomUuid) {
     });
             
     var wordleAnswers = officialWordleAnswers.toString().split("\n");
-    // To ignore the damn URL links and youtube links every gc has
     for (let word in _fiveletterwords) {
-        if (_fiveletterwords[word] == `https` || _fiveletterwords[word] == `youtu`) {
+        if (annoyingStopWords.includes(_fiveletterwords[word])) {
             continue
         }
 
-        // If the 5 letter lingo is in the official wordle answers, dont include it
+        // If the 5 letter lingo is not in the official wordle answers, include it
         if (!(wordleAnswers.includes(_fiveletterwords[word]))) {
             filteredWords.push(_fiveletterwords[word]);
         }

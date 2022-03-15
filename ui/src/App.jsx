@@ -9,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
 		flexDirection: "column",
+    gap: "50px",
   },
   modal: {
     display: "flex",
@@ -40,11 +41,13 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
+
 function App() {
   const classes = useStyles();
   const [roomName, setRoomName] = useState('');
   const [newRoomName, setNewRoomName] = useState('');
-  const [isPlaying, setisPlaying] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleRoomNameChange = (event) => {
     setRoomName(event.target.value);
@@ -56,18 +59,43 @@ function App() {
 
   const handleRoomNameSubmit = (event) => {
     event.preventDefault();
-    setisPlaying(true);
+    setIsPlaying(true);
   };
 
-  const handleCreateNewRoomSubmit = (event) => {
+  const handleFileUpload = (event) => {
     event.preventDefault();
-    setNewRoomSelected(true);
+    setUploadedFile(event.target.files[0]);
+  };
+
+  async function handleCreateNewRoomSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+  
+    formData.append("name", newRoomName);
+    formData.append("file", uploadedFile);
+  
+    let queryBuilder = "/api/createlingleroom";
+    await fetch(queryBuilder, {
+      method: "POST",
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        setRoomName(newRoomName);
+        setIsPlaying(true);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
   };
 
   return (
     <div className={classes.container}>
-            <Typography variant="h3">
-                Welcome to Lingle!
+            <Typography variant="h6">
+                lingle
             </Typography>
             {isPlaying ? <Board room={roomName} /> :
             <div className={classes.modal}>
@@ -107,7 +135,7 @@ function App() {
                     value={newRoomName}
                     onChange={handleNewRoomNameChange}
                   />
-                  <Button variant="outlined" color="secondary" component="label">
+                  <Button variant="outlined" color="secondary" component="label" onChange={handleFileUpload}>
                     Choose Whatsapp File
                     <input
                       type="file"
