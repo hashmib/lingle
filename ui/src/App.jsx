@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import {Typography, Button} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
+import CheckIcon from '@mui/icons-material/Check';
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -47,6 +48,7 @@ function App() {
   const [roomName, setRoomName] = useState('');
   const [newRoomName, setNewRoomName] = useState('');
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handleRoomNameChange = (event) => {
@@ -64,6 +66,7 @@ function App() {
 
   const handleFileUpload = (event) => {
     event.preventDefault();
+    setIsFileUploaded(true);
     setUploadedFile(event.target.files[0]);
   };
 
@@ -142,6 +145,7 @@ function App() {
                       hidden
                     />
                   </Button>
+                  {isFileUploaded ? <CheckIcon /> : null}
                   <Button variant="contained" color="secondary" onClick={handleCreateNewRoomSubmit}>
                     Create Room and Start Game
                   </Button>

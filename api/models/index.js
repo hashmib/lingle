@@ -16,16 +16,15 @@ async function getWordOfTheDay(_roomUuid) {
     });
 
     // The index is already sorted by most frequent words for each room
-    let topHit = result.body.hits.hits[0];
+    let rawResponse = result.body.hits.hits;
+    let wordHits = [];
 
-    // We now have our top hit, we will return to the client, and remove it from the index
-    let clearIndex = await esClient.client.delete({
-      index: esClient.WORDS_INDEX,
-      id: topHit._id
-    });
+    for (let i in rawResponse) {
+      wordHits.push(rawResponse[i]._source);
+    }
 
     // Return the object, which includes the word and frequency
-    return topHit._source;
+    return wordHits;
 
   } catch (err) {
       console.error(`An error occurred while connecting and searching Elasticsearch for word with room uuid ${_roomUuid}:`);

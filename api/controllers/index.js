@@ -44,7 +44,7 @@ async function wordOfTheDayController(req, res) {
     else {
       let roomUuid = nameParser.parseRoomNameAndGetUuid(req.query.name);
       let result = await model.getWordOfTheDay(roomUuid);
-      res.send({success: true, word: result});
+      res.send({success: true, words: result});
     }
   } catch (err) {
     console.log(`Word of the Day Controller Error:\n ${err}`);

@@ -87,6 +87,13 @@ const initialGameState = {
   error: ''
 }
 
+
+const lingleAPIObject = {
+  frequency: 0,
+  room_uuid: '',
+  word: ''
+}
+
 // Calls our API to fetch the word to be guessed
 async function fetchWordOfTheDay(room_name) {
   let queryBuilder = "/api/wordoftheday?name=" + room_name;
@@ -105,18 +112,28 @@ function Board (props) {
     initialGameState
   )
 
+  const [wordIndex, setWordIndex] = useState(0)
+
+  const [words, setWords] = useState([])
+
   const [isWon, setIsWon] = useState(false)
 
   // useEffect requires async within an async... weird
   useEffect(() => {
     (async () => {
       const data = await fetchWordOfTheDay(props.room)
-      setGameState(gameState => {
-        const newGameState = JSON.parse(JSON.stringify(gameState))
-        newGameState.word = data.word.word.toUpperCase();
-  
-        return newGameState
-      });
+
+      if (data.success) {
+        const words_in = data.words;
+
+        setWords(words_in)
+        setGameState(gameState => {
+          const newGameState = JSON.parse(JSON.stringify(gameState))
+          newGameState.word = words_in[wordIndex].word.toUpperCase();
+    
+          return newGameState
+        });
+      }
     })();
   },[])
 
@@ -142,16 +159,16 @@ function Board (props) {
   async function handlePlayAgain(event) {
     event.preventDefault();
 
-    const data = await fetchWordOfTheDay(props.room)
     setGameState(gameState => {
       gameState = JSON.parse(JSON.stringify(initialGameState))
       const newGameState = JSON.parse(JSON.stringify(gameState));
-      newGameState.word = data.word.word.toUpperCase();
+      newGameState.word = words[wordIndex + 1].word.toUpperCase();
       console.log(newGameState)
 
       return newGameState;
     });
     setIsWon(false);
+    setWordIndex(wordIndex + 1);
   }
 
   function eraseCharacter () {
