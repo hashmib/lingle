@@ -1,7 +1,7 @@
 const esClient = require('../config/elasticsearch');
 
 async function getWordOfTheDay(_roomUuid) {
-  // Room name must match, & password must be correct
+  // Searches docs by room uuid and returns the word of the day
   try {
     console.log(_roomUuid);
     const result = await esClient.client.search({
@@ -32,6 +32,26 @@ async function getWordOfTheDay(_roomUuid) {
     }
 }
 
+
+async function checkRoomExists(_roomUuid) {
+  try {
+    const result = await esClient.client.search({
+      index: esClient.MESSAGES_INDEX,
+      body: {
+        "query": {
+          "match": {
+            "room_uuid": _roomUuid
+          }
+        }
+      }
+    });
+    return result.body.hits.total.value > 0;
+  } catch (err) {
+      console.error(`An error occurred while checking if room exists:`);
+      console.log(err);
+  }
+}
+
 async function populateWordsForRoom(_chat, _words) {
   try {
     // Uses Elastic's bulk index to index all the messages in the chat
@@ -55,5 +75,6 @@ async function populateWordsForRoom(_chat, _words) {
 
 module.exports = {
   populateWordsForRoom,
+  checkRoomExists,
   getWordOfTheDay
 }

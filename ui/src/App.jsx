@@ -4,6 +4,15 @@ import TextField from "@material-ui/core/TextField";
 import {Typography, Button} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import CheckIcon from '@mui/icons-material/Check';
+import MuiAlert from '@material-ui/lab/Alert';
+import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+
+const fontTheme = createTheme({
+  typography: {
+    fontFamily: [
+      'Ubuntu Mono',
+    ].join(','),
+},});
 
 const useStyles = makeStyles(theme => ({
 	container: {
@@ -39,8 +48,12 @@ const useStyles = makeStyles(theme => ({
 	button: {
 		marginTop: theme.spacing(3),
 		marginBottom: theme.spacing(5),
-	}
+	},
 }));
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 function App() {
@@ -50,18 +63,42 @@ function App() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isErrorState, setIsErrorState] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const handleRoomNameChange = (event) => {
     setRoomName(event.target.value);
+    setIsErrorState(false);
   };
 
   const handleNewRoomNameChange = (event) => {
     setNewRoomName(event.target.value);
+    setIsErrorState(false);
   };
 
-  const handleRoomNameSubmit = (event) => {
+  async function handleRoomNameSubmit(event) {
     event.preventDefault();
-    setIsPlaying(true);
+
+    // Reusing same API since it will tell us if the room exists or not
+    let queryBuilder = "/api/wordoftheday?name=" + roomName;
+
+    await fetch(queryBuilder)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        setRoomName(roomName);
+        setIsPlaying(true);
+      }
+      else {
+        setIsErrorState(true);
+        setErrorMessage(data.error);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+
   };
 
   const handleFileUpload = (event) => {
@@ -69,6 +106,7 @@ function App() {
     setIsFileUploaded(true);
     setUploadedFile(event.target.files[0]);
   };
+
 
   async function handleCreateNewRoomSubmit(event) {
     event.preventDefault();
@@ -89,6 +127,10 @@ function App() {
         setRoomName(newRoomName);
         setIsPlaying(true);
       }
+      else {
+        setIsErrorState(true);
+        setErrorMessage(data.error);
+      }
     })
     .catch(error => {
       console.log(error);
@@ -96,13 +138,14 @@ function App() {
   };
 
   return (
+    <ThemeProvider theme={fontTheme}>
     <div className={classes.container}>
-            <Typography variant="h6">
+            <Typography variant="h3">
                 lingle
             </Typography>
             {isPlaying ? <Board room={roomName} /> :
             <div className={classes.modal}>
-                <Typography variant="subtitle1">
+                <Typography variant="h6">
                   Join an existing room! Enter your room name below. 
                 </Typography>
                 <div className={classes.horizontal}>
@@ -122,9 +165,10 @@ function App() {
                     Start Game
                   </Button>
                 </div>
-                <Typography variant="subtitle1">
+                <Typography variant="h6">
                   Or alternatively, upload a Whatsapp chat export below, enter a room name, and start a new game!
                 </Typography>
+                {isErrorState ? <Alert severity="error">{errorMessage}</Alert> : null}
                 <div className={classes.horizontal}>
                   <TextField
                     label="Room Name"
@@ -153,6 +197,7 @@ function App() {
             </div>
             }
     </div>
+    </ThemeProvider>
   );
 }
 

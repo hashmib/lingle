@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button } from "@material-ui/core";
+import { Button, Typography} from "@material-ui/core";
 import './Board.css'
 
 function keyIsInvalid (key) {
@@ -22,7 +22,7 @@ function wordIsNotComplete ({ attempts, position }) {
   return attempts[position.attempt].some(char => char.value === '')
 }
 
-function wordIsComplete(currentAttempt) {
+function wordIsCorrect(currentAttempt) {
   console.log(currentAttempt)
   for (let letterIndex in currentAttempt) {
     if (currentAttempt[letterIndex].status !== 'at-location') {
@@ -87,13 +87,6 @@ const initialGameState = {
   error: ''
 }
 
-
-const lingleAPIObject = {
-  frequency: 0,
-  room_uuid: '',
-  word: ''
-}
-
 // Calls our API to fetch the word to be guessed
 async function fetchWordOfTheDay(room_name) {
   let queryBuilder = "/api/wordoftheday?name=" + room_name;
@@ -106,7 +99,6 @@ async function fetchWordOfTheDay(room_name) {
   return data;
 }
 
-
 function Board (props) {
   const [{ word, attempts, position, error }, setGameState] = useState(
     initialGameState
@@ -117,6 +109,8 @@ function Board (props) {
   const [words, setWords] = useState([])
 
   const [isWon, setIsWon] = useState(false)
+
+  const [isOver, setIsOver] = useState(false)
 
   // useEffect requires async within an async... weird
   useEffect(() => {
@@ -168,6 +162,7 @@ function Board (props) {
       return newGameState;
     });
     setIsWon(false);
+    setIsOver(false);
     setWordIndex(wordIndex + 1);
   }
 
@@ -227,12 +222,16 @@ function Board (props) {
         }
       }
 
+      if (position.attempt === 5) {
+        setIsOver(true);
+      }
+
       position.attempt += 1
       position.char = 0
 
       newGameState.error = ''
 
-      if (wordIsComplete(currentAttempt)) {
+      if (wordIsCorrect(currentAttempt)) {
         setIsWon(true)
       }
 
@@ -341,6 +340,14 @@ function Board (props) {
             </div>
             {isWon ? <Button variant="contained" color="secondary" onClick={handlePlayAgain}> Congrats! Play the next word!</Button> : null}
             <div className='error'>{error}</div>
+            {isOver ?
+            <div>
+              <Typography variant="h6">
+                Oops. Try again next. The word was {word}. It has been used {words[wordIndex].frequency} times.
+              </Typography>
+              <br></br>
+              <Button variant="contained" color="secondary" onClick={handlePlayAgain}>Play the next word!</Button>
+            </div> :
             <div className='keyboard'>
               {['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, rowIndex) => (
                 <div key={rowIndex} className={`row row-${rowIndex}`}>
@@ -370,6 +377,7 @@ function Board (props) {
                 </button>
               </div>
             </div>
+            }
     </div>
   )
 }
