@@ -338,7 +338,14 @@ function Board (props) {
                 </div>
               ))}
             </div>
-            {isWon ? <Button variant="contained" color="secondary" onClick={handlePlayAgain}> Congrats! Play the next word!</Button> : null}
+            {isWon ?
+            <div>
+              <Typography variant="h6">
+               Well done! That was used {words[wordIndex].frequency} times in your chat.
+              </Typography>
+              <br></br>
+              <Button variant="contained" color="secondary" onClick={handlePlayAgain}> Congrats! Play the next word!</Button>
+            </div> : null}
             <div className='error'>{error}</div>
             {isOver ?
             <div>

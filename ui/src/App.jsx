@@ -1,5 +1,5 @@
 import Board from './components/Board'
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import {Typography, Button} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
@@ -145,8 +145,11 @@ function App() {
             </Typography>
             {isPlaying ? <Board room={roomName} /> :
             <div className={classes.modal}>
+                <Typography variant="h5">
+                  Hello! Lingle is like Wordle, but uses the lingo you and your friends most commonly use as the answer words.
+                </Typography>
                 <Typography variant="h6">
-                  Join an existing room! Enter your room name below. 
+                  If you've played before, join an existing room below:
                 </Typography>
                 <div className={classes.horizontal}>
                   <TextField
@@ -166,7 +169,10 @@ function App() {
                   </Button>
                 </div>
                 <Typography variant="h6">
-                  Or alternatively, upload a Whatsapp chat export below, enter a room name, and start a new game!
+                  If this is your first time playing
+                </Typography>
+                <Typography variant="h5">
+                  Enter a room name (like your group chat's name), upload a chat archive (.txt) and start a new game!
                 </Typography>
                 {isErrorState ? <Alert severity="error">{errorMessage}</Alert> : null}
                 <div className={classes.horizontal}>
