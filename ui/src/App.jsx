@@ -27,8 +27,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    height: "100vh",
-    gap: "15px",
+    height: "30vh",
+    gap: "5px",
   },
   horizontal: {
     display: "flex",
@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    gap: "15px",
+    gap: "5px",
   },
   text: {
     color: "white"
@@ -144,11 +144,12 @@ function App() {
                 lingle
             </Typography>
             {isPlaying ? <Board room={roomName} /> :
-            <div className={classes.modal}>
+            <div>
+              <div className={classes.modal}>
                 <Typography variant="h5">
                   Hello! Lingle is like Wordle, but uses the lingo you and your friends most commonly use as the answer words.
                 </Typography>
-                <Typography variant="h6">
+                <Typography variant="h6" color="secondary">
                   If you've played before, join an existing room below:
                 </Typography>
                 <div className={classes.horizontal}>
@@ -168,11 +169,13 @@ function App() {
                     Start Game
                   </Button>
                 </div>
-                <Typography variant="h6">
+              </div>
+              <div className={classes.modal}>
+                <Typography variant="h6" color="secondary">
                   If this is your first time playing
                 </Typography>
                 <Typography variant="h5">
-                  Enter a room name (like your group chat's name), upload a chat archive (.txt) and start a new game!
+                  Enter a room name (like your group chat's name), upload a chat archive (must be a txt file) and start a new game!
                 </Typography>
                 {isErrorState ? <Alert severity="error">{errorMessage}</Alert> : null}
                 <div className={classes.horizontal}>
@@ -200,6 +203,7 @@ function App() {
                     Create Room and Start Game
                   </Button>
                 </div>
+              </div>
             </div>
             }
     </div>

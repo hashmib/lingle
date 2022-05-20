@@ -27,7 +27,27 @@ services:
     networks: 
       - linglenet
 
-  
+  reverseproxy:
+    container_name: nginx
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    depends_on:
+      - game
+      - server
+    networks:
+      - linglenet
+    ports:
+      - "80:80"
+
+
+
+
+
+
+
+
   elasticsearch:
     container_name: es_db
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0

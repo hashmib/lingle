@@ -341,7 +341,7 @@ function Board (props) {
             {isWon ?
             <div>
               <Typography variant="h6">
-               Well done! That was used {words[wordIndex].frequency} times in your chat.
+               Well done! That word was used {words[wordIndex].frequency} times in your chat.
               </Typography>
               <br></br>
               <Button variant="contained" color="secondary" onClick={handlePlayAgain}> Congrats! Play the next word!</Button>
