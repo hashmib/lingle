@@ -5,7 +5,7 @@ let nameParser = require ('../utils/shared');
 
 
 async function createRoomController(req, res) {
-  // TODO: Check if room exists
+
   try {
     if (!req.files || !req.body.name) {
       res.status(400).json({ success: false, error: "Error, you did not upload the correct file format or provide a name"});
@@ -35,14 +35,40 @@ async function createRoomController(req, res) {
         res.status(400).json({ success: false, error: "Error, a room with this name already exists"});
       }
     }
-} catch (err) {
+  } catch (err) {
     console.log(err)
     res.status(500).json({ success: false, error: "There was an error uploading your file."});
   }
+
+}
+
+
+async function hintController(req, res) {
+
+  try {
+    if (!req.query.word || !req.body.room) {
+      res.status(400).json({ success: false, error: "Error, you did not provide the correct parameters"});
+    }
+    else {
+      // Extract word from query param, roomName from body, and make call to elastic client
+      let word = req.query.word;
+      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.body.room);
+
+      let result = await model.getHintForWord(word, roomUuid);
+
+      // Parse result -> build term frequency map by sender -> sorted -> return
+      res.send({success: true, hints: result});
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ success: false, error: "Error with HintController. Please try again."});
+  }
+
 }
 
 
 async function wordOfTheDayController(req, res) {
+
   try {
     if (!req.query.name) {
       res.status(400).json({ success: false, error: "error, you did not provide a name"});
@@ -64,10 +90,12 @@ async function wordOfTheDayController(req, res) {
     console.log(`Word of the Day Controller Error:\n ${err}`);
     res.status(500).json({ success: false, error: "There was an error getting the word of the day."});
   }
+
 }
 
 
 module.exports = {
   createRoomController,
-  wordOfTheDayController
+  wordOfTheDayController,
+  hintController
 }

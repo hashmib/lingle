@@ -11,6 +11,7 @@ var controller = require('../controllers');
 router.get('/helloworld', (req, res) => { res.send('Hello World!') });
 router.post('/createlingleroom', controller.createRoomController);
 router.get('/wordoftheday', controller.wordOfTheDayController);
+router.get('/hint', controller.hintController);
 
 module.exports = {
     router
