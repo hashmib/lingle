@@ -1,17 +1,15 @@
-# Project Title
-Lingle
+# Lingle - a Wordle clone for your lingo
 
-## Description
+
+## What is lingle?
 
 A Wordle clone where the answers are selected from your own group chats!
 
-## Getting Started
+#### Built with 
 
-### Dependencies
+* Docker, React, Node, Elasticsearch, NGINX
 
-* Docker, Node, Elasticsearch
-
-### Installing
+#### Installing
 
 * How/where to download your program
 * Any modifications needed to be made to files/folders
@@ -43,8 +41,8 @@ ex. [@DomPizzie](https://twitter.com/dompizzie)
 * 0.2
     * Various bug fixes and optimizations
     * See [commit change]() or See [release history]()
-* 0.1
-    * Initial Release
+* 1.0
+    * Launched beta
 
 ## License
 
