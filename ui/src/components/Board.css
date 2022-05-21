@@ -22,6 +22,11 @@
   padding: 1rem;
 }
 
+
+.hint {
+  padding: 0.5rem;
+}
+
 .attempt {
   display: grid;
   grid-auto-flow: column;
@@ -33,6 +38,10 @@
   gap: 0.3rem;
 
   position: relative;
+}
+
+.bulb {
+  padding: 0.5rem;
 }
 
 .attempt.current::before {

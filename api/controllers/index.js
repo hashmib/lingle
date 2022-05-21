@@ -46,17 +46,16 @@ async function createRoomController(req, res) {
 async function hintController(req, res) {
 
   try {
-    if (!req.query.word || !req.body.room) {
+    if (!req.query.word || !req.query.room) {
       res.status(400).json({ success: false, error: "Error, you did not provide the correct parameters"});
     }
     else {
       // Extract word from query param, roomName from body, and make call to elastic client
       let word = req.query.word;
-      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.body.room);
-
+      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.query.room);
+        
+      // Call model method -> build term frequency map by sender -> unsorted -> return
       let result = await model.getHintForWord(word, roomUuid);
-
-      // Parse result -> build term frequency map by sender -> sorted -> return
       res.send({success: true, hints: result});
     }
   } catch (err) {

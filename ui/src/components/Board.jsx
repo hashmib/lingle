@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Button, Typography} from "@material-ui/core";
+import { Button, Typography, IconButton } from "@material-ui/core";
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import './Board.css'
 
 function keyIsInvalid (key) {
@@ -99,6 +100,18 @@ async function fetchWordOfTheDay(room_name) {
   return data;
 }
 
+
+async function fetchHint(roomName, answerWord) {
+  let queryBuilder = "/api/hint?word=" + answerWord + "&room=" + roomName;
+  const data = await fetch(queryBuilder)
+    .then(response => response.json())
+    .catch(error => {
+      console.log(error);
+    });
+  
+  return data;
+}
+
 function Board (props) {
   const [{ word, attempts, position, error }, setGameState] = useState(
     initialGameState
@@ -111,6 +124,12 @@ function Board (props) {
   const [isWon, setIsWon] = useState(false)
 
   const [isOver, setIsOver] = useState(false)
+
+  const [answerHintSender, setAnswerHintSender] = useState('')
+
+  const [answerHintFrequency, setAnswerHintFrequency] = useState(0)
+
+  const [isHintClicked, setIsHintClicked] = useState(false)
 
   // useEffect requires async within an async... weird
   useEffect(() => {
@@ -149,6 +168,24 @@ function Board (props) {
     })
   };
 
+  async function handleGetHint(event) {
+    event.preventDefault();
+
+    console.log("Handle Get Hint function is clicked and running")
+
+    // todo - this is janky fix it
+    if (!isHintClicked) {
+      const data = await fetchHint(props.room, words[wordIndex].word)
+
+      const senders = Object.keys(data.hints)
+      let randomSender = senders[Math.floor(Math.random() * senders.length)]
+
+      setAnswerHintSender(randomSender)
+      setAnswerHintFrequency(data.hints[randomSender])
+      setIsHintClicked(true);
+    }
+  }
+
 
   async function handlePlayAgain(event) {
     event.preventDefault();
@@ -161,7 +198,12 @@ function Board (props) {
 
       return newGameState;
     });
+
+    // Reset game state
     setIsWon(false);
+    setIsHintClicked(false);
+    setAnswerHintFrequency(0);
+    setAnswerHintSender('');
     setIsOver(false);
     setWordIndex(wordIndex + 1);
   }
@@ -232,6 +274,7 @@ function Board (props) {
       newGameState.error = ''
 
       if (wordIsCorrect(currentAttempt)) {
+        setIsHintClicked(false);
         setIsWon(true)
       }
 
@@ -355,33 +398,55 @@ function Board (props) {
               <br></br>
               <Button variant="contained" color="secondary" onClick={handlePlayAgain}>Play the next word!</Button>
             </div> :
-            <div className='keyboard'>
-              {['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, rowIndex) => (
-                <div key={rowIndex} className={`row row-${rowIndex}`}>
-                  {row.split('').map(letter => (
-                    <button
-                      key={letter}
-                      className={`key ${checkKey(letter)}`}
-                      onClick={() => enterCharacter(letter)}
-                    >
-                      {letter}
-                    </button>
-                  ))}
+            <div>
+              <div>
+              {isHintClicked ? 
+                <div className='hint'>
+                  <Typography variant="h6" color="secondary">
+                    {answerHintSender} has used this word {answerHintFrequency} times in chat.
+                  </Typography>
+                </div> 
+                :
+                <div>
+                  {isWon ? null :
+                    <div className='bulb'>
+                                  <IconButton color="secondary" onClick={handleGetHint}>
+                                    <LightbulbIcon />
+                                  </IconButton>
+                    </div>
+                  }
+                  </div>
+                  }
+              </div>
+
+              <div className='keyboard'>
+                {['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].map((row, rowIndex) => (
+                  <div key={rowIndex} className={`row row-${rowIndex}`}>
+                    {row.split('').map(letter => (
+                      <button
+                        key={letter}
+                        className={`key ${checkKey(letter)}`}
+                        onClick={() => enterCharacter(letter)}
+                      >
+                        {letter}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+                <div className='row'>
+                  <button className='key delete' onClick={eraseCharacter}>
+                    <img
+                      src='https://www.svgrepo.com/show/48292/delete.svg'
+                      alt='delete'
+                    />
+                  </button>
+                  <button className='key enter' onClick={guessWord}>
+                    <img
+                      src='https://www.svgrepo.com/show/258678/send.svg'
+                      alt='send'
+                    />
+                  </button>
                 </div>
-              ))}
-              <div className='row'>
-                <button className='key delete' onClick={eraseCharacter}>
-                  <img
-                    src='https://www.svgrepo.com/show/48292/delete.svg'
-                    alt='delete'
-                  />
-                </button>
-                <button className='key enter' onClick={guessWord}>
-                  <img
-                    src='https://www.svgrepo.com/show/258678/send.svg'
-                    alt='send'
-                  />
-                </button>
               </div>
             </div>
             }
