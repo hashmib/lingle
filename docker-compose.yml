@@ -5,13 +5,11 @@ services:
     build: 
       context: ./ui
       dockerfile: ./Dockerfile
-    ports:
-      - "3000:3000"
     links:
       - "server"
     networks: 
       - linglenet
-    command: npm run dev
+    command: npm run serve
     
 
   server:
@@ -21,8 +19,6 @@ services:
       dockerfile: ./Dockerfile
     depends_on:
       - elasticsearch
-    ports:
-      - "8080:8080"
     command: npm run start
     networks: 
       - linglenet
@@ -41,19 +37,9 @@ services:
     ports:
       - "80:80"
 
-
-
-
-
-
-
-
   elasticsearch:
     container_name: es_db
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
       - discovery.type=single-node
     networks:
