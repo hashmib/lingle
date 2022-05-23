@@ -1,7 +1,7 @@
 import Board from './components/Board'
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
-import {Typography, Button} from "@material-ui/core";
+import { Typography, Button, Divider } from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import CheckIcon from '@mui/icons-material/Check';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     height: "30vh",
     gap: "5px",
+    marginTop: "10vh"
   },
   horizontal: {
     display: "flex",
@@ -49,6 +50,9 @@ const useStyles = makeStyles(theme => ({
 		marginTop: theme.spacing(3),
 		marginBottom: theme.spacing(5),
 	},
+  divider: {
+    backgroundColor: "red",
+  }
 }));
 
 function Alert(props) {
@@ -170,12 +174,19 @@ function App() {
                   </Button>
                 </div>
               </div>
+              <Divider className={classes.divider} />
               <div className={classes.modal}>
                 <Typography variant="h6" color="secondary">
                   If this is your first time playing
                 </Typography>
                 <Typography variant="h5">
-                  Enter a room name (like your group chat's name), upload a chat archive (must be a txt file) and start a new game!
+                  1. Enter a room name (like your group chat's name)
+                </Typography>
+                <Typography variant="h5">
+                  2. Upload a chat archive (must be a txt file!)
+                </Typography>
+                <Typography variant="h5">
+                  3. Start a new game!
                 </Typography>
                 {isErrorState ? <Alert severity="error">{errorMessage}</Alert> : null}
                 <div className={classes.horizontal}>
