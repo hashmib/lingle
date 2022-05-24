@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: "center",
     height: "30vh",
     gap: "5px",
-    marginTop: "10vh"
+    marginTop: "5vh"
   },
   horizontal: {
     display: "flex",

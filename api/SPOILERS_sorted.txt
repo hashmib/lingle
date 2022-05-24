@@ -1838,6 +1838,7 @@ solar
 solid
 solve
 sonar
+songs
 sonic
 sooth
 sooty
@@ -2035,6 +2036,7 @@ terra
 terse
 testy
 thank
+thats
 theft
 their
 theme
@@ -2067,6 +2069,7 @@ tilde
 timer
 timid
 tipsy
+tired
 titan
 tithe
 title
@@ -2246,6 +2249,7 @@ wench
 whack
 whale
 wharf
+whats
 wheat
 wheel
 whelp
