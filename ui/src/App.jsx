@@ -145,7 +145,7 @@ function App() {
     <ThemeProvider theme={fontTheme}>
     <div className={classes.container}>
             <Typography variant="h3">
-                lingle
+                lingle v1.0
             </Typography>
             {isPlaying ? <Board room={roomName} /> :
             <div>

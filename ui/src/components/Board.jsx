@@ -190,6 +190,7 @@ function Board (props) {
   async function handlePlayAgain(event) {
     event.preventDefault();
 
+    // TODO - check if last word in words array / end of room
     setGameState(gameState => {
       gameState = JSON.parse(JSON.stringify(initialGameState))
       const newGameState = JSON.parse(JSON.stringify(gameState));

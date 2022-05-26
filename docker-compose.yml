@@ -11,7 +11,6 @@ services:
       - linglenet
     command: npm run serve
     
-
   server:
     container_name: lingleAPI
     build: 
@@ -36,6 +35,9 @@ services:
       - linglenet
     ports:
       - "80:80"
+      - "443:443"
+    volumes: 
+     - /Users/hashmibilal/Desktop/certs:/etc/nginx/certs
 
   elasticsearch:
     container_name: es_db
