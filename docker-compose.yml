@@ -24,7 +24,6 @@ services:
 
   reverseproxy:
     container_name: nginx
-    restart: always
     build:
       context: ./nginx
       dockerfile: ./Dockerfile
