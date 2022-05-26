@@ -36,7 +36,7 @@ services:
       - "80:80"
       - "443:443"
     volumes: 
-     - /data/certs:/etc/nginx/certs
+     - ~/data/certs:/etc/nginx/certs
 
   elasticsearch:
     container_name: es_db
