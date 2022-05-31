@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-const annoyingStopWords = [`https`, `youtu`, `gonna`, `wanna`, `kinda`, `hahah`, `loool`, `ahaha`, `yours`];
+const annoyingStopWords = [`https`, `youtu`, `gonna`, `wanna`, `kinda`, `hahah`, `loool`, `ahaha`, `yours`, `doesn`, `makes`, `looks`, `years`];
 
 async function buildLingleWords(_fiveletterwords, _roomUuid) {
     let filteredWords = []
