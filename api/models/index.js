@@ -14,7 +14,8 @@ async function getWordOfTheDay(_roomUuid) {
             "room_uuid": _roomUuid
           }
         }
-      }
+      },
+      size: MAX_SIZE_HITS
     });
 
     // The index is already sorted by most frequent words for each room

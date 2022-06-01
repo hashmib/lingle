@@ -1,7 +1,7 @@
 var model = require('../models');
 var parser = require('../utils/whatsappchatparser');
 var builder = require('../utils/wordsbuilder');
-let nameParser = require ('../utils/shared');
+let utilities = require ('../utils/shared');
 
 
 async function createRoomController(req, res) {
@@ -12,7 +12,7 @@ async function createRoomController(req, res) {
     } 
     else {
       let uploadedChat = req.files.file;
-      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.body.name);
+      let roomUuid = utilities.parseRoomNameAndGetUuid(req.body.name);
 
       // Check if room exists
       let roomExists = await model.checkRoomExists(roomUuid);
@@ -52,7 +52,7 @@ async function hintController(req, res) {
     else {
       // Extract word from query param, roomName from body, and make call to elastic client
       let word = req.query.word;
-      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.query.room);
+      let roomUuid = utilities.parseRoomNameAndGetUuid(req.query.room);
         
       // Call model method -> build term frequency map by sender -> unsorted -> return
       let result = await model.getHintForWord(word, roomUuid);
@@ -73,12 +73,19 @@ async function wordOfTheDayController(req, res) {
       res.status(400).json({ success: false, error: "error, you did not provide a name"});
     }
     else {
-      let roomUuid = nameParser.parseRoomNameAndGetUuid(req.query.name);
+      let roomUuid = utilities.parseRoomNameAndGetUuid(req.query.name);
 
       // Check if room exists
       let roomExists = await model.checkRoomExists(roomUuid);
       if (roomExists) {
         let result = await model.getWordOfTheDay(roomUuid);
+        
+        // Shuffle result, remove objects with a frequency of 1
+        // TODO - make this user defined
+        result = utilities.shuffleList(result);
+        result = result.filter(word => word.frequency > 1);
+
+        // Return response to client
         res.send({success: true, words: result});
       }
       else {
