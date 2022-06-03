@@ -7,7 +7,23 @@ const annoyingStopWords = [
     `works`, `feels`, `keeps`, `stays`, `means`, `lives`,
     `masks`, `hours`, `asked`, `times`, `fears`, `fires`,
     `tests`, `calls`, `drops`, `needs`, `saves`, `liked`,
-    `hated`, `added`, `rooms`, `lived`, `items`, `wakes`
+    `hated`, `added`, `rooms`, `lived`, `items`, `wakes`,
+    `dates`, `didnt`, `plays`, `filed`, `minds`, `shows`,
+    `cared`, `cares`, `forms`, `spans`, `sodas`, `faces`,
+    `cages`, `pokes`, `poked`, `youve`, `youre`, `homes`,
+    `camps`, `items`, `sides`, `added`, `wasnt`, `gates`,
+    `tells`, `words`, `parts`, `likes`, `helps`, `cases`,
+    `clips`, `foods`, `picks`, `names`, `named`, `gives`,
+    `cells`, `hands`, `birds`, `finds`, `ruins`, `seems`,
+    `types`, `fixed`, `fixes`, `risks`, `tends`, `loans`,
+    `hurts`, `theyd`, `shops`, `falls`, `reads`, `rules`,
+    `tries`, `flies`, `tried`, `pulls`, `trans`, `lamps`,
+    `swipe`, `ruled`, `turns`, `stars`, `typed`, `wears`,
+    `flaws`, `weeks`, `roads`, `acted`, `maids`, `sizes`,
+    `flows`, `sends`, `views`, `heres`, `spins`, `walls`,
+    `suits`, `pages`, `belts`, `faked`, `waves`, `stops`,
+    `backs`, `farms`, `holds`, `weren`, `terms`, `arent`,
+    `taxes`, `posts`, `kills`, `hopes`, `hoped`, `costs`
 ];
 
 async function buildLingleWords(_fiveletterwords, _roomUuid) {

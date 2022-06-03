@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
 		flexDirection: "column",
-    gap: "50px",
+    gap: "100px"
   },
   modal: {
     display: "flex",
@@ -27,9 +27,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    height: "30vh",
+    height: "100%",
     gap: "5px",
-    marginTop: "5vh"
   },
   horizontal: {
     display: "flex",
@@ -180,14 +179,21 @@ function App() {
                   If this is your first time playing
                 </Typography>
                 <Typography variant="h5">
-                  1. Enter a room name (like your group chat's name)
+                  1. In your Whatsapp chat, find and hit the Export Chat button. (without media)
                 </Typography>
                 <Typography variant="h5">
-                  2. Upload a chat archive (must be a txt file!)
+                  2. You now have a zip archive with the txt file inside. 
                 </Typography>
                 <Typography variant="h5">
-                  3. Start a new game!
+                  3. you will need the file inside that zip, it is usually called _chat.txt
                 </Typography>
+                <Typography variant="h5">
+                  4. In the field below, enter a room name (like your group chat's name)
+                </Typography>
+                <Typography variant="h5">
+                  5. Upload the chat archive (must be the txt file!) and hit Start!
+                </Typography>
+
                 {isErrorState ? <Alert severity="error">{errorMessage}</Alert> : null}
                 <div className={classes.horizontal}>
                   <TextField

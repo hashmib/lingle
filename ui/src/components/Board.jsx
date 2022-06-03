@@ -171,8 +171,6 @@ function Board (props) {
   async function handleGetHint(event) {
     event.preventDefault();
 
-    console.log("Handle Get Hint function is clicked and running")
-
     // todo - this is janky fix it
     if (!isHintClicked) {
       const data = await fetchHint(props.room, words[wordIndex].word)
@@ -190,23 +188,27 @@ function Board (props) {
   async function handlePlayAgain(event) {
     event.preventDefault();
 
-    // TODO - check if last word in words array / end of room
-    setGameState(gameState => {
-      gameState = JSON.parse(JSON.stringify(initialGameState))
-      const newGameState = JSON.parse(JSON.stringify(gameState));
-      newGameState.word = words[wordIndex + 1].word.toUpperCase();
-      console.log(newGameState)
+    // check if word index larger than words array
+    if (wordIndex + 1 >= words.length) {
+      alert("You have completed the game! Refresh and try another chat!")
+    }    
+    else {
+      setGameState(gameState => {
+        gameState = JSON.parse(JSON.stringify(initialGameState))
+        const newGameState = JSON.parse(JSON.stringify(gameState));
+        newGameState.word = words[wordIndex + 1].word.toUpperCase();
 
-      return newGameState;
-    });
+        return newGameState;
+      });
 
-    // Reset game state
-    setIsWon(false);
-    setIsHintClicked(false);
-    setAnswerHintFrequency(0);
-    setAnswerHintSender('');
-    setIsOver(false);
-    setWordIndex(wordIndex + 1);
+      // Reset game state
+      setIsWon(false);
+      setIsHintClicked(false);
+      setAnswerHintFrequency(0);
+      setAnswerHintSender('');
+      setIsOver(false);
+      setWordIndex(wordIndex + 1);
+    }
   }
 
   function eraseCharacter () {

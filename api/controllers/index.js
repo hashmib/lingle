@@ -81,9 +81,9 @@ async function wordOfTheDayController(req, res) {
         let result = await model.getWordOfTheDay(roomUuid);
         
         // Shuffle result, remove objects with a frequency of 1
-        // TODO - make this user defined
+        // s/o Hassan Ali
         result = utilities.shuffleList(result);
-        result = result.filter(word => word.frequency > 1);
+        result = result.filter(word => word.frequency > 5);
 
         // Return response to client
         res.send({success: true, words: result});
